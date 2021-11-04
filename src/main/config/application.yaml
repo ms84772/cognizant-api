@@ -1,0 +1,11 @@
+#spring.datasource.url=jdbc:postgresql://localhost/curso_db
+#spring.datasource.username=db_user
+#spring.datasource.password=12345
+#spring.datasource.driver-class-name=com.mysql.jdbc.Driver
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost/curso_db
+    username: db_user
+    password: 12345
+    driver-class-name=com: com.mysql.jdbc.Driver
+
