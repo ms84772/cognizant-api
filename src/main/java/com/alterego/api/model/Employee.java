@@ -19,4 +19,5 @@ public class Employee {
     private Date dob;
     private String status;
     private Double salary;
+    private Integer speed;
 }

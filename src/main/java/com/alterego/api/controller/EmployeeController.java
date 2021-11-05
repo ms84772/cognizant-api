@@ -8,7 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/employee")
@@ -77,4 +78,51 @@ public class EmployeeController {
         }
         return responseEntity;
     }
+
+    @PostMapping("/move-employees")
+    public ResponseEntity moveEmployeesFromSiteAtoB(@RequestBody List<Employee> employeeList){
+
+        ResponseEntity responseEntity;
+        if(employeeList!=null && employeeList.size()==0 ||employeeList.size() == 1){
+            Map response = new HashMap();
+            response.put("Error", "Employee list has to be more than 2 items");
+            responseEntity = new ResponseEntity(response, HttpStatus.BAD_REQUEST);
+        }else{
+            Map response = new HashMap();
+            List<Employee> empListSorted = employeeList
+                    .stream()
+                    .sorted(Comparator.comparingInt(Employee::getSpeed).reversed())
+                    .collect(Collectors.toList());
+            int trip=1;
+            int timeSpeed=0;
+            for(int i=0;i<empListSorted.size();i++){
+                List<Employee> tripList = new ArrayList<>();
+                Employee e1 = empListSorted.get(i);
+                tripList.add(e1);
+                timeSpeed += e1.getSpeed();
+                if(i+1< empListSorted.size()){
+                    Employee e2 = empListSorted.get(i+1);
+                    tripList.add(e2);
+                }else{
+                    List<Employee> tripBack = new ArrayList<>();
+                    List<Employee> lastTrip = (List<Employee>)response.get("Trip "+(trip-1));
+                    Employee empBack = lastTrip.get(lastTrip.size()-1);
+                    tripBack.add(empBack);
+                    trip++;
+                    response.put("Trip Back "+trip,tripBack);
+                    tripList.add(empBack);
+                    timeSpeed += empBack.getSpeed();
+                    timeSpeed += e1.getSpeed();
+                    trip++;
+                }
+                response.put("Trip "+trip,tripList);
+                trip++;
+                i++;
+            }
+            response.put("TimeSpeed",timeSpeed);
+            responseEntity = new ResponseEntity(response, HttpStatus.OK);
+        }
+        return responseEntity;
+    }
+
 }
