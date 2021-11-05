@@ -83,12 +83,11 @@ public class EmployeeController {
     public ResponseEntity moveEmployeesFromSiteAtoB(@RequestBody List<Employee> employeeList){
 
         ResponseEntity responseEntity;
+        Map response = new HashMap();
         if(employeeList!=null && employeeList.size()==0 ||employeeList.size() == 1){
-            Map response = new HashMap();
             response.put("Error", "Employee list has to be more than 2 items");
             responseEntity = new ResponseEntity(response, HttpStatus.BAD_REQUEST);
         }else{
-            Map response = new HashMap();
             List<Employee> empListSorted = employeeList
                     .stream()
                     .sorted(Comparator.comparingInt(Employee::getSpeed).reversed())
